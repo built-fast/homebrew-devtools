@@ -1,5 +1,5 @@
 class Php83Stack < Formula
-  desc "Meta package for PHP development stack)"
+  desc "Meta package for BuiltFast PHP development"
   homepage "https://github.com/built-fast/homebrew-devtools"
 
   url "https://raw.githubusercontent.com/built-fast/homebrew-devtools/refs/heads/main/Formula/php83-stack.rb"
