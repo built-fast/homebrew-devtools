@@ -2,7 +2,7 @@ class Php83Stack < Formula
   desc "Meta package for PHP development stack)"
   homepage "https://github.com/built-fast/homebrew-devtools"
 
-  url "https://raw.githubusercontent.com/itspriddle/homebrew-brews/master/Formula/pressed-devel.rb"
+  url "https://raw.githubusercontent.com/built-fast/homebrew-devtools/refs/heads/main/Formula/php83-stack.rb"
   version "HEAD"
 
   option "with-redis", "Install Redis server"
