@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+set -e
+
+: "${VERSION:?Must specify version}"
+: "${FORMULA:?Must specify formula}"
+
+FORMULA_FILE="${0%/*}/../../Formula/$FORMULA.rb"
+
+SHASUM=$(
+  curl -sL "https://github.com/built-fast/$FORMULA/archive/$VERSION.tar.gz" |
+    shasum -a 256 |
+    awk '{ print $1 }'
+)
+
+# Update version line
+sed -i '' "s/version \".*\"/version \"${VERSION#v}\"/" "$FORMULA_FILE"
+
+# Update sha256 line
+sed -i '' "s/sha256   \".*\"/sha256   \"$SHASUM\"/" "$FORMULA_FILE"

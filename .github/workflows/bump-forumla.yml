@@ -1,0 +1,32 @@
+# gh workflow run release.yml \
+#   -f version=v0.0.1 \
+#   -f forumula=lcars \
+#   -R built-fast/homebrew-devtools
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version'
+        required: true
+        type: string
+      formula:
+        description: 'Formula'
+        required: true
+        type: string
+
+jobs:
+  update-formula:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update formula
+        run: |
+          mkdir -p Formula
+
+          FORMULA='${{ github.event.inputs.formula }}' VERSION='${{ github.event.inputs.version }}' ./.github/scripts/update-formula
+
+          git config --global user.name 'Josh Priddle'
+          git config --global user.email 'jpriddle@me.com'
+          git add Formula/${{ github.event.inputs.formula }}.rb
+          git commit -m 'Updated ${{ github.event.inputs.formula }} to ${{ github.event.inputs.version }}'
+          git push origin main
