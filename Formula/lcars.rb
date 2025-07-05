@@ -1,9 +1,9 @@
 class Lcars < Formula
-  version "0.0.1"
+  version "0.1.0"
 
   homepage "https://github.com/built-fast/lcars"
   url      "https://github.com/built-fast/lcars/archive/v#{version}.tar.gz"
-  sha256   "fixme"
+  sha256   "4758f077b1ecfe4dd15908483acafa09ac1a0a7cae0663a9b5d3b336a6e24c5e"
 
   head "https://github.com/built-fast/lcars.git", branch: "main"
 
