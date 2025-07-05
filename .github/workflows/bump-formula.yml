@@ -23,7 +23,7 @@ jobs:
         run: |
           mkdir -p Formula
 
-          FORMULA='${{ github.event.inputs.formula }}' VERSION='${{ github.event.inputs.version }}' ./.github/scripts/update-formula
+          FORMULA='${{ github.event.inputs.formula }}' VERSION='${{ github.event.inputs.version }}' ./.github/script/update-formula
 
           git config --global user.name 'Josh Priddle'
           git config --global user.email 'jpriddle@me.com'
