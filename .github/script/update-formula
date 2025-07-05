@@ -7,14 +7,23 @@ set -e
 
 FORMULA_FILE="Formula/$FORMULA.rb"
 
+# Check if formula file exists
+if [[ ! -f "$FORMULA_FILE" ]]; then
+  echo "Error: Formula file $FORMULA_FILE not found"
+  exit 1
+fi
+
 SHASUM=$(
   curl -sL "https://github.com/built-fast/$FORMULA/archive/$VERSION.tar.gz" |
     shasum -a 256 |
     awk '{ print $1 }'
 )
 
-# Update version line
-sed -i '' "s/version \".*\"/version \"${VERSION#v}\"/" "$FORMULA_FILE"
-
-# Update sha256 line
-sed -i '' "s/sha256   \".*\"/sha256   \"$SHASUM\"/" "$FORMULA_FILE"
+# Update version line (compatible with both macOS and Linux)
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  sed -i '' "s/version \".*\"/version \"${VERSION#v}\"/" "$FORMULA_FILE"
+  sed -i '' "s/sha256   \".*\"/sha256   \"$SHASUM\"/" "$FORMULA_FILE"
+else
+  sed -i "s/version \".*\"/version \"${VERSION#v}\"/" "$FORMULA_FILE"
+  sed -i "s/sha256   \".*\"/sha256   \"$SHASUM\"/" "$FORMULA_FILE"
+fi
