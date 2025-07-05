@@ -5,7 +5,7 @@ set -e
 : "${VERSION:?Must specify version}"
 : "${FORMULA:?Must specify formula}"
 
-FORMULA_FILE="${0%/*}/../../Formula/$FORMULA.rb"
+FORMULA_FILE="Formula/$FORMULA.rb"
 
 SHASUM=$(
   curl -sL "https://github.com/built-fast/$FORMULA/archive/$VERSION.tar.gz" |
