@@ -13,17 +13,45 @@ if [[ ! -f "$FORMULA_FILE" ]]; then
   exit 1
 fi
 
-SHASUM=$(
-  curl -sL "https://github.com/built-fast/$FORMULA/archive/$VERSION.tar.gz" |
-    shasum -a 256 |
-    awk '{ print $1 }'
-)
+sed_inplace() {
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    sed -i '' "$@"
+  else
+    sed -i "$@"
+  fi
+}
 
-# Update version line (compatible with both macOS and Linux)
-if [[ "$OSTYPE" == "darwin"* ]]; then
-  sed -i '' "s/version \".*\"/version \"${VERSION#v}\"/" "$FORMULA_FILE"
-  sed -i '' "s/sha256   \".*\"/sha256   \"$SHASUM\"/" "$FORMULA_FILE"
+# Update version
+sed_inplace "s/version \".*\"/version \"${VERSION#v}\"/" "$FORMULA_FILE"
+
+# Check if this is a multi-platform formula (has platform-specific URLs)
+if grep -q "aarch64-apple-darwin" "$FORMULA_FILE"; then
+  # Multi-platform formula (e.g., vector)
+  # Extract the repo name from the homepage or URL
+  REPO=$(grep -m1 'homepage' "$FORMULA_FILE" | sed 's/.*github.com\/built-fast\/\([^"]*\).*/\1/')
+
+  PLATFORMS=(
+    "aarch64-apple-darwin"
+    "x86_64-apple-darwin"
+    "aarch64-unknown-linux-gnu"
+    "x86_64-unknown-linux-gnu"
+  )
+
+  for PLATFORM in "${PLATFORMS[@]}"; do
+    URL="https://github.com/built-fast/$REPO/releases/download/$VERSION/$FORMULA-$PLATFORM.tar.gz"
+    echo "Fetching $URL"
+    SHASUM=$(curl -sL "$URL" | shasum -a 256 | awk '{ print $1 }')
+    echo "  sha256: $SHASUM"
+
+    # Replace the sha256 on the line after the URL containing this platform
+    sed_inplace "/$PLATFORM/{n;s/sha256 \".*\"/sha256 \"$SHASUM\"/;}" "$FORMULA_FILE"
+  done
 else
-  sed -i "s/version \".*\"/version \"${VERSION#v}\"/" "$FORMULA_FILE"
-  sed -i "s/sha256   \".*\"/sha256   \"$SHASUM\"/" "$FORMULA_FILE"
+  # Single tarball formula (e.g., lcars)
+  SHASUM=$(
+    curl -sL "https://github.com/built-fast/$FORMULA/archive/$VERSION.tar.gz" |
+      shasum -a 256 |
+      awk '{ print $1 }'
+  )
+  sed_inplace "s/sha256   \".*\"/sha256   \"$SHASUM\"/" "$FORMULA_FILE"
 fi
