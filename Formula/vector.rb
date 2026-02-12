@@ -1,5 +1,5 @@
 class Vector < Formula
-  version "0.2.0"
+  version "0.2.1"
 
   desc "CLI for Vector Pro hosting platform"
   homepage "https://github.com/built-fast/vector-cli"
@@ -8,18 +8,18 @@ class Vector < Formula
   if OS.mac?
     if Hardware::CPU.arm?
       url "https://github.com/built-fast/vector-cli/releases/download/v#{version}/vector-aarch64-apple-darwin.tar.gz"
-      sha256 "bdd35dc5a86da8cf08de7a97dd2ed6b604bb6f0bcbda862a2c3f3eb18acf1eaf"
+      sha256 "ba943f43abdec7cf80e7f665d0a968bfe8f10dc424c1f4756ccf27e5c5660746"
     else
       url "https://github.com/built-fast/vector-cli/releases/download/v#{version}/vector-x86_64-apple-darwin.tar.gz"
-      sha256 "e83b9ee9e7afeca34ea95a94e3867fa8830a9bb0b1dee75a98aed41d6031d05b"
+      sha256 "b3a150f9b73adb83742b347abcf59c377c482aadb72e21f2ce7bae97938a6bec"
     end
   elsif OS.linux?
     if Hardware::CPU.arm?
       url "https://github.com/built-fast/vector-cli/releases/download/v#{version}/vector-aarch64-unknown-linux-gnu.tar.gz"
-      sha256 "1dffa27614bda06c3be43c135185471edfec2d9fcb0fbd3e2c45217351c296b6"
+      sha256 "01265753048c7715eae3c2c9f19a40fc5f43b8d55e37fc7b8e809d97087a81f8"
     else
       url "https://github.com/built-fast/vector-cli/releases/download/v#{version}/vector-x86_64-unknown-linux-gnu.tar.gz"
-      sha256 "745025c47e67ae48adf82560281f52fb50ef63356b3c4a97ee476afe394f2a7b"
+      sha256 "323d7faf476249a362792441f009363f525bcb930a1a6ef329aa7c1ce99c50cf"
     end
   end
 
