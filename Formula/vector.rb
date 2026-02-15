@@ -25,6 +25,7 @@ class Vector < Formula
 
   def install
     bin.install "vector"
+    man1.install "man/man1/vector.1"
   end
 
   test do
