@@ -1,15 +1,25 @@
-# Homebrew DevTools
+# BuiltFast Homebrew DevTools
 
-A Homebrew tap providing development tools and meta-packages for PHP development.
+A Homebrew tap providing tools for BuiltFast users and developers.
 
 ## Installation
 
 ```bash
 brew tap built-fast/devtools
-brew install php83-stack
 ```
 
 ## Available Formulas
+
+### LCARS
+
+Laravel CLI and Reusable Scripts, a collection of tools and scripts to enhance
+Laravel development.
+
+#### Usage
+
+```bash
+brew install built-fast/devtools/php83-stack
+```
 
 ### php83-stack
 
@@ -34,6 +44,29 @@ brew install php83-stack
 
 # With optional services
 brew install php83-stack --with-mysql --with-redis
+```
+
+### recurly-cli
+
+Command-line interface for the [Recurly](https://recurly.com) v3 API.
+
+#### Usage
+
+```bash
+brew install built-fast/devtools/recurly-cli
+
+recurly configure
+
+# Table (default), JSON, or pretty JSON
+recurly accounts list
+recurly accounts list --output json
+recurly accounts list --output json-pretty
+
+# Select specific fields
+recurly accounts list --field id,code,email
+
+# Built-in jq filtering (no external jq needed)
+recurly subscriptions list --jq '.data[] | select(.state == "active") | .id'
 ```
 
 ## License
