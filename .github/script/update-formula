@@ -4,10 +4,10 @@ set -e
 
 : "${VERSION:?Must specify version}"
 : "${FORMULA:?Must specify formula}"
+: "${TYPE:?Must specify type (go, rust, or bash)}"
 
 FORMULA_FILE="Formula/$FORMULA.rb"
 
-# Check if formula file exists
 if [[ ! -f "$FORMULA_FILE" ]]; then
   echo "Error: Formula file $FORMULA_FILE not found"
   exit 1
@@ -21,37 +21,67 @@ sed_inplace() {
   fi
 }
 
+# Strip leading "v" for version string in formula
+BARE_VERSION="${VERSION#v}"
+
 # Update version
-sed_inplace "s/version \".*\"/version \"${VERSION#v}\"/" "$FORMULA_FILE"
+sed_inplace "s/version \".*\"/version \"$BARE_VERSION\"/" "$FORMULA_FILE"
 
-# Check if this is a multi-platform formula (has platform-specific URLs)
-if grep -q "aarch64-apple-darwin" "$FORMULA_FILE"; then
-  # Multi-platform formula (e.g., vector)
-  # Extract the repo name from the homepage or URL
-  REPO=$(grep -m1 'homepage' "$FORMULA_FILE" | sed 's/.*github.com\/built-fast\/\([^"]*\).*/\1/')
+# Extract the repo name from the homepage URL
+REPO=$(grep -m1 'homepage' "$FORMULA_FILE" | sed 's/.*github.com\/built-fast\/\([^"]*\).*/\1/')
 
-  PLATFORMS=(
-    "aarch64-apple-darwin"
-    "x86_64-apple-darwin"
-    "aarch64-unknown-linux-gnu"
-    "x86_64-unknown-linux-gnu"
-  )
+case "$TYPE" in
+  go)
+    # GoReleaser naming: {name}_{version}_{os}_{arch}.tar.gz
+    PLATFORMS=(
+      "darwin_arm64"
+      "darwin_amd64"
+      "linux_arm64"
+      "linux_amd64"
+    )
 
-  for PLATFORM in "${PLATFORMS[@]}"; do
-    URL="https://github.com/built-fast/$REPO/releases/download/$VERSION/$FORMULA-$PLATFORM.tar.gz"
+    for PLATFORM in "${PLATFORMS[@]}"; do
+      URL="https://github.com/built-fast/$REPO/releases/download/$VERSION/${FORMULA}_${BARE_VERSION}_${PLATFORM}.tar.gz"
+      echo "Fetching $URL"
+      SHASUM=$(curl -sL "$URL" | shasum -a 256 | awk '{ print $1 }')
+      echo "  sha256: $SHASUM"
+
+      # Replace the sha256 on the line after the URL containing this platform
+      sed_inplace "/$PLATFORM/{n;s/sha256 \".*\"/sha256 \"$SHASUM\"/;}" "$FORMULA_FILE"
+    done
+    ;;
+
+  rust)
+    # Rust cross-compile naming: {name}-{target}.tar.gz
+    PLATFORMS=(
+      "aarch64-apple-darwin"
+      "x86_64-apple-darwin"
+      "aarch64-unknown-linux-gnu"
+      "x86_64-unknown-linux-gnu"
+    )
+
+    for PLATFORM in "${PLATFORMS[@]}"; do
+      URL="https://github.com/built-fast/$REPO/releases/download/$VERSION/${FORMULA}-${PLATFORM}.tar.gz"
+      echo "Fetching $URL"
+      SHASUM=$(curl -sL "$URL" | shasum -a 256 | awk '{ print $1 }')
+      echo "  sha256: $SHASUM"
+
+      sed_inplace "/$PLATFORM/{n;s/sha256 \".*\"/sha256 \"$SHASUM\"/;}" "$FORMULA_FILE"
+    done
+    ;;
+
+  bash)
+    # Source archive from GitHub
+    URL="https://github.com/built-fast/$FORMULA/archive/$VERSION.tar.gz"
     echo "Fetching $URL"
     SHASUM=$(curl -sL "$URL" | shasum -a 256 | awk '{ print $1 }')
     echo "  sha256: $SHASUM"
 
-    # Replace the sha256 on the line after the URL containing this platform
-    sed_inplace "/$PLATFORM/{n;s/sha256 \".*\"/sha256 \"$SHASUM\"/;}" "$FORMULA_FILE"
-  done
-else
-  # Single tarball formula (e.g., lcars)
-  SHASUM=$(
-    curl -sL "https://github.com/built-fast/$FORMULA/archive/$VERSION.tar.gz" |
-      shasum -a 256 |
-      awk '{ print $1 }'
-  )
-  sed_inplace "s/sha256   \".*\"/sha256   \"$SHASUM\"/" "$FORMULA_FILE"
-fi
+    sed_inplace "s/sha256   \".*\"/sha256   \"$SHASUM\"/" "$FORMULA_FILE"
+    ;;
+
+  *)
+    echo "Error: Unknown type '$TYPE' (expected 'go', 'rust', or 'bash')"
+    exit 1
+    ;;
+esac

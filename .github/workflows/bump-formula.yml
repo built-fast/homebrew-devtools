@@ -1,18 +1,27 @@
-# gh workflow run release.yml \
+# gh workflow run bump-formula.yml \
 #   -f version=v0.0.1 \
 #   -f formula=lcars \
+#   -f type=bash \
 #   -R built-fast/homebrew-devtools
 on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version'
+        description: 'Version (e.g. v1.0.0)'
         required: true
         type: string
       formula:
-        description: 'Formula'
+        description: 'Formula name'
         required: true
         type: string
+      type:
+        description: 'Formula type'
+        required: true
+        type: choice
+        options:
+          - go
+          - rust
+          - bash
 
 jobs:
   update-formula:
@@ -20,15 +29,20 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
       - name: Update formula
+        env:
+          FORMULA: ${{ github.event.inputs.formula }}
+          VERSION: ${{ github.event.inputs.version }}
+          TYPE: ${{ github.event.inputs.type }}
         run: |
           mkdir -p Formula
-
-          FORMULA='${{ github.event.inputs.formula }}' VERSION='${{ github.event.inputs.version }}' ./.github/script/update-formula
+          ./.github/script/update-formula
 
           git config --global user.name 'Josh Priddle'
           git config --global user.email 'jpriddle@me.com'
-          git add Formula/${{ github.event.inputs.formula }}.rb
-          git commit -m 'Updated ${{ github.event.inputs.formula }} to ${{ github.event.inputs.version }}'
+          git add "Formula/${FORMULA}.rb"
+          git commit -m "Updated ${FORMULA} to ${VERSION}"
           git push origin main
