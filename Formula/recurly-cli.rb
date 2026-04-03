@@ -25,7 +25,7 @@ class RecurlyCli < Formula
 
   def install
     bin.install "recurly"
-    man1.install "man/man1/recurly.1"
+    man1.install "share/man/man1/recurly.1"
     generate_completions_from_executable(bin/"recurly", "completion")
   end
 
