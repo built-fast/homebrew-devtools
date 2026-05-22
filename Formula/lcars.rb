@@ -1,10 +1,10 @@
 class Lcars < Formula
-  version "0.2.3"
+  version "0.2.4"
 
   desc     "Laravel CLI and Reusable Scripts"
   homepage "https://github.com/built-fast/lcars"
   url      "https://github.com/built-fast/lcars/archive/v#{version}.tar.gz"
-  sha256   "eb6376f8602fd86a5eccaf82d4e423377bc7cadbfc89fe8744183b0f90fab406"
+  sha256   "9c66839e8483192fc0e7f5af7113910d104f0bf1ebc5b101861c0936e698d905"
 
   head "https://github.com/built-fast/lcars.git", branch: "main"
 
