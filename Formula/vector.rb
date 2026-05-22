@@ -1,5 +1,5 @@
 class Vector < Formula
-  version "0.8.0"
+  version "0.9.0"
 
   desc "CLI for Vector Pro hosting platform"
   homepage "https://github.com/built-fast/vector-cli"
