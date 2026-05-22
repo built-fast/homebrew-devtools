@@ -1,5 +1,5 @@
 class RecurlyCli < Formula
-  version "0.0.5"
+  version "0.0.6"
 
   desc "Unofficial Recurly CLI"
   homepage "https://github.com/built-fast/recurly-cli"
@@ -8,18 +8,18 @@ class RecurlyCli < Formula
   if OS.mac?
     if Hardware::CPU.arm?
       url "https://github.com/built-fast/recurly-cli/releases/download/v#{version}/recurly-cli_#{version}_darwin_arm64.tar.gz"
-      sha256 "3a15c822916a319d66d83809bc8b07426f362e5931d56992d4ef921ba76c8f2f"
+      sha256 "f6c39eb46e015638a7421296341194e47ee90cbee698403cc32ba7c23a12f41a"
     else
       url "https://github.com/built-fast/recurly-cli/releases/download/v#{version}/recurly-cli_#{version}_darwin_amd64.tar.gz"
-      sha256 "57cad2d6758957eef325c9fae9d5e93d53f372cca25841c1e71fc9889f868a5b"
+      sha256 "eeda0b26ad7ecc6588e3a68d83eac85d8162cd9a594aa4635d383152c53d25ff"
     end
   elsif OS.linux?
     if Hardware::CPU.arm?
       url "https://github.com/built-fast/recurly-cli/releases/download/v#{version}/recurly-cli_#{version}_linux_arm64.tar.gz"
-      sha256 "35cde6031247595d21240d68bf79bafd682c11420bc4f370edcafcd884b629b9"
+      sha256 "221f4bea6a1252bf6f5f95d8c8e25edd407b802298072fe8e813b99b465975f8"
     else
       url "https://github.com/built-fast/recurly-cli/releases/download/v#{version}/recurly-cli_#{version}_linux_amd64.tar.gz"
-      sha256 "c6bebff6b18180c5c054ade5c733a984b3aff386af9911afbc53fe8a2aebab3a"
+      sha256 "d06555d8a80f2769701de151313a4051fff30d3ca6749b72d6d1ee16f9a66019"
     end
   end
 
