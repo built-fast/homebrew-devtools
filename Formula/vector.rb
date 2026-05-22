@@ -25,7 +25,7 @@ class Vector < Formula
 
   def install
     bin.install "vector"
-    man1.install "man/man1/vector.1"
+    man1.install "share/man/man1/vector.1"
     generate_completions_from_executable(bin/"vector", "completion")
   end
 
